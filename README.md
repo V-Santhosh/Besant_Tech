@@ -1,184 +1,175 @@
-# 📋 Besant Technologies — Enquiry Form
+# Besant Technologies – Student Enquiry Form (Tkinter)
 
-> A clean, modular **Python Tkinter** desktop application to capture student enquiry data and persist it across **TXT**, **Excel (.xlsx)**, and **MySQL** — all from one sleek GUI form.
+This is a simple desktop application built using Python Tkinter to capture student enquiry details at Besant Technologies.
 
----
+Normally, enquiry details are written down manually and later entered into Excel or some internal system. The idea behind this project was to avoid doing the same data entry multiple times.
 
-## 🖼️ Overview
+Using this form, staff can enter the student details once — and the data will automatically be stored in:
 
-This app provides a simple desktop form for Besant Technologies staff to log student enquiry details. On submission, data is automatically saved to three destinations simultaneously — a flat text file, an Excel workbook, and a MySQL database.
+- a .txt file  
+- an Excel sheet  
+- a MySQL database  
 
----
-
-## ✨ Features
-
-| Feature | Details |
-|---|---|
-| 🖥️ **GUI Form** | Built with Python's native `tkinter` — no browser needed |
-| 📝 **TXT Export** | Appends each submission as a comma-separated row |
-| 📊 **Excel Export** | Auto-creates & appends to `user_details.xlsx` via `openpyxl` |
-| 🗄️ **MySQL Insert** | Persists to a `Besant` table via `pymysql` |
-| 🔘 **Radio Buttons** | Experience / Fresher selection baked in |
-| ⚠️ **Error Handling** | DB failures show a dialog — form stays open, data isn't lost |
+So basically, one-time entry → saved in all 3 places.
 
 ---
 
-## 🗂️ Project Structure
+## What happens on submission?
+
+When the user fills out the form and clicks submit:
+
+- Data gets appended into a text file (user_details.txt)
+- Same data is written into an Excel file (user_details.xlsx)
+- It is also inserted into a MySQL table named Besant
+
+If the Excel file or txt file does not already exist, the application will create it during the first entry itself.
+
+Also, in case the database connection fails for some reason, the form will remain open so that the entered data is not lost.
+
+---
+
+## Project structure (rough idea)
 
 ```
 besant_enquiry/
 │
-├── main.py                   # 🚀 Entry point — run this file
-│
-├── config.py                 # ⚙️  Shared constants (labels, filenames, DB creds)
+├── main.py          -> starts the application
+├── config.py        -> DB credentials & shared constants
 │
 ├── ui/
-│   ├── __init__.py
-│   ├── window.py             # 🪟 Builds the Tkinter window & form fields
-│   └── buttons.py            # 🔘 Submit & Quit buttons
+│   ├── window.py    -> form layout
+│   └── buttons.py   -> submit / quit buttons
 │
 ├── handlers/
-│   ├── __init__.py
-│   └── form_handler.py       # 🧠 Orchestrates data collection & saving
+│   └── form_handler.py -> collects form data
 │
 └── db/
-    ├── __init__.py
-    ├── txt_writer.py          # 📝 Writes to user_details.txt
-    ├── excel_writer.py        # 📊 Writes to user_details.xlsx
-    └── db_writer.py           # 🗄️  Inserts into MySQL
+    ├── txt_writer.py
+    ├── excel_writer.py
+    └── db_writer.py
 ```
+
+main.py loads the UI → UI passes values to the handler → handler sends the data to txt / Excel / MySQL modules.
 
 ---
 
-## 🔁 Module Connection Flow
+## Installation
+
+Clone the repository:
 
 ```
-main.py
-  ├── ui/window.py        →  builds form, returns (window, entries, exp_var)
-  └── ui/buttons.py       →  attaches buttons
-        └── handlers/form_handler.py   →  collects & routes data
-              ├── db/txt_writer.py     →  saves to .txt
-              ├── db/excel_writer.py   →  saves to .xlsx
-              └── db/db_writer.py      →  inserts into MySQL
-                    └── config.py      →  DB credentials & constants
-```
-
-> 💡 Data flows **top-down**. Only `main.py` touches `ui/`. The `db/` layer is completely independent and reusable.
-
----
-
-## 📦 Installation
-
-### 1. Clone the repo
-```bash
 git clone https://github.com/your-username/besant-enquiry-form.git
 cd besant-enquiry-form
 ```
 
-### 2. Install dependencies
-```bash
+Install required libraries:
+
+```
 pip install openpyxl pymysql
 ```
 
-> `tkinter` comes pre-installed with standard Python. If missing: `sudo apt install python3-tk`
+Tkinter usually comes pre-installed with Python.
 
-### 3. Set up MySQL
+If you're on Linux and it's missing:
+
+```
+sudo apt install python3-tk
+```
+
+---
+
+## MySQL Setup
+
+Create a database and table using the following:
+
 ```sql
 CREATE DATABASE tkinterdb;
-
 USE tkinterdb;
 
 CREATE TABLE Besant (
-    id        INT AUTO_INCREMENT PRIMARY KEY,
-    DATE      VARCHAR(50),
-    NAME      VARCHAR(100),
-    MOB       BIGINT,
-    ALT_NO    BIGINT,
-    EMAIL     VARCHAR(100),
-    ADDR      TEXT,
-    COURSE    VARCHAR(100),
-    BATCH     VARCHAR(50),
-    REF_SRC   VARCHAR(100),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    DATE VARCHAR(50),
+    NAME VARCHAR(100),
+    MOB BIGINT,
+    ALT_NO BIGINT,
+    EMAIL VARCHAR(100),
+    ADDR TEXT,
+    COURSE VARCHAR(100),
+    BATCH VARCHAR(50),
+    REF_SRC VARCHAR(100),
     EXP_or_FSH VARCHAR(20),
-    CONTACT   VARCHAR(100),
-    COUNSLER  VARCHAR(100),
-    FEES      INT,
-    CMT       TEXT
+    CONTACT VARCHAR(100),
+    COUNSLER VARCHAR(100),
+    FEES INT,
+    CMT TEXT
 );
 ```
 
-### 4. Configure credentials
-Edit `config.py`:
+---
+
+## Update DB Credentials
+
+Inside config.py, update your MySQL credentials:
+
 ```python
 DB_CONFIG = {
-    "host":     "localhost",
-    "user":     "root",
-    "password": "your_password",   # 👈 update this
+    "host": "localhost",
+    "user": "root",
+    "password": "your_password",
     "database": "tkinterdb"
 }
 ```
 
-### 5. Run the app
-```bash
+---
+
+## Run the application
+
+```
 python main.py
 ```
 
 ---
 
-## 🖥️ Form Fields
+## Form fields included
 
-| # | Field | Type |
-|---|---|---|
-| 1 | Date | Text Entry |
-| 2 | Name | Text Entry |
-| 3 | Mobile No | Text Entry |
-| 4 | Alternate No | Text Entry |
-| 5 | Email Id | Text Entry |
-| 6 | Address | Text Entry |
-| 7 | Course Interested | Text Entry |
-| 8 | Batch Preferred | Text Entry |
-| 9 | How You Came To Know Us | Text Entry |
-| 10 | Experience or Fresher | 🔘 Radio Button |
-| 11 | Contact Person from Besant | Text Entry |
-| 12 | Counselor | Text Entry |
-| 13 | Fees | Text Entry |
-| 14 | Comment | Text Entry |
+The form currently captures:
 
----
-
-## 📤 Output Files
-
-| File | Location | Format |
-|---|---|---|
-| `user_details.txt` | Project root | CSV-style plain text |
-| `user_details.xlsx` | Project root | Excel workbook |
-| MySQL table | `tkinterdb.Besant` | Relational DB rows |
-
-> 📌 Both `txt` and `xlsx` files are auto-created on first submission if they don't exist.
+- Date  
+- Name  
+- Mobile Number  
+- Alternate Number  
+- Email  
+- Address  
+- Course Interested  
+- Preferred Batch  
+- Reference Source  
+- Experience / Fresher  
+- Contact Person  
+- Counselor  
+- Fees  
+- Comments  
 
 ---
 
-## 🛠️ Tech Stack
+## Output
 
-- **Python 3.x**
-- **tkinter** — GUI framework
-- **openpyxl** — Excel read/write
-- **pymysql** — MySQL connector
+After submission, the data will be stored in:
 
----
+- user_details.txt (plain text format)
+- user_details.xlsx (Excel format)
+- tkinterdb.Besant (MySQL table)
 
----
-
-## 🤝 Contributing
-
-Pull requests are welcome!
+Both txt and Excel files are auto-created during the first submission if they are not already present.
 
 ---
 
+## Tech Stack
 
+- Python  
+- Tkinter  
+- openpyxl  
+- pymysql  
 
 ---
 
-<div align="center">
-  Made with ❤️ for Besant Technologies
-</div>
+This project was mainly built to reduce duplicate data entry and keep enquiry records stored in both file system and database at the same time.
